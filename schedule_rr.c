@@ -5,44 +5,31 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #include "schedulers.h"
 #include "task.h"
 #include "cpu.h" // Lenhth of a time quantum is 10 milliseconds (Professor required)
 #include "list.h"
 
-
-
 struct node *taskList = NULL;  // Head of the task list
 struct node *next_node = NULL; // Pointer for round-robin traversal
-
-void log_error(const char *message) {
-    fprintf(stderr, "Error: %s\n", message);
-}
-// Add a task to the list
+// Add a task
 void add(char *name, int priority, int burst) {
-    // Allocate memory for a new Task structure
+    // Allocate memory
     Task *t = malloc(sizeof(Task));
     if (t == NULL) {
-        log_error("Unable to allocate memory.");
         return;
     }
-
-    // Allocate memory for the task name and copy it
     t->name = malloc(strlen(name) + 1);
     if (t->name == NULL) {
-        log_error("Unable to allocate memory for task name.");
         free(t); // Free task structure if name allocation fails
         return;
     }
     strcpy(t->name, name);
     t->priority = priority;
     t->burst = burst;
-
     // Create a new node for the task
     struct node *newNode = malloc(sizeof(struct node));
     if (newNode == NULL) {
-        log_error("Unable to allocate memory for list node.");
         free(t->name);
         free(t);
         return;
@@ -53,8 +40,10 @@ void add(char *name, int priority, int burst) {
     // If the list is empty, set the new node as the head
     if (taskList == NULL) {
         taskList = newNode;
-    } else {
-        // Traverse to the end of the list and add the new node
+    } 
+    else 
+    {
+        // Traverse to the end of the list
         struct node *current = taskList;
         while (current->next != NULL) {
             current = current->next;
@@ -63,17 +52,17 @@ void add(char *name, int priority, int burst) {
     }
 }
 
-// pick the next task to execute
+// pick the next task
 Task *pickNextTask() {
     if (next_node == NULL) 
     {
-        return NULL;  // Exit to prevent running an empty task list
+        return NULL;  // Exit
     }
     Task *ret = next_node->task;
     if (next_node->next != NULL) {
         next_node = next_node->next; // Move to the next task
     } else {
-        next_node = taskList; // Wrap around to the beginning of the list
+        next_node = taskList; 
     }
     return ret;
 }
@@ -91,12 +80,10 @@ void schedule() {
         if (QUANTUM < t->burst) {
             slice = QUANTUM; // cpu.h defines QUANTUM as 10 milliseconds
         } else {
-            slice = t->burst; // Use the remaining burst time
+            slice = t->burst;
         }
         run(t, slice);  // Run the task
-        t->burst -= slice;
-
-        // Remove it from the list and free memory
+        t->burst -= slice; // Update the remaining burst time
         if (t->burst <= 0) 
         {
             delete(&taskList, t);
