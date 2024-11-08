@@ -1,21 +1,3 @@
-/**
- * Priority scheduling
- */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "schedulers.h"
-#include "task.h"
-#include "cpu.h"
-#include "list.h"
-
-struct node *taskList = NULL;
-
-void log_error(const char *message) {
-    fprintf(stderr, "Error: %s\n", message);
-}
-// Add a task
 void add(char *name, int priority, int burst) {
     // Allocate memory for a new Task structure
     Task *t = malloc(sizeof(Task));
@@ -46,21 +28,21 @@ void add(char *name, int priority, int burst) {
     newNode->task = t;
     newNode->next = NULL;
 
-    // Insert the task into the list in order of priority (lowest to highest)
+    // Insert the task into the list in order of priority (highest to lowest)
     if (taskList == NULL) {
         taskList = newNode; // If the list is empty, set the new node as the head
     } else {
         struct node *current = taskList;
         struct node *previous = NULL;
 
-        // Find the correct position to insert the new node (lowest to highest priority)
-        while (current != NULL && current->task->priority <= t->priority) {
+        // Find the correct position to insert the new node (highest to lowest priority)
+        while (current != NULL && current->task->priority >= t->priority) {
             previous = current;
             current = current->next;
         }
 
         if (previous == NULL) {
-            // Insert at the beginning if the new task has the lowest priority
+            // Insert at the beginning if the new task has the highest priority
             newNode->next = taskList;
             taskList = newNode;
         } else {
@@ -70,40 +52,3 @@ void add(char *name, int priority, int burst) {
         }
     }
 }
-
-// Pick the next task with the Highest Priority
-Task *pickNextTask() {
-    if (taskList == NULL) 
-    {
-        return NULL;  // Exit to prevent running an empty task list
-    }
-    Task *priority_job = taskList->task;
-    struct node *n = taskList;
-    // Iterate through the list
-    while (n) 
-    {
-        if (n->task->priority > priority_job->priority) 
-        {
-            priority_job = n->task;
-        }
-        n = n->next;
-    }
-    return priority_job;
-}
-// Schedule using Priority Scheduling
-void schedule() {
-    if (taskList == NULL) 
-    {
-        return NULL;  // Exit to prevent running an empty task list
-    }
-    while (taskList != NULL) 
-    {
-        Task *t = pickNextTask(); 
-        run(t, t->burst);         
-        delete(&taskList, t);
-        // Free memory allocated
-        free(t->name);
-        free(t);
-    }
-}
-
