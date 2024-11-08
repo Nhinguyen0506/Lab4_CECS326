@@ -71,7 +71,7 @@ void add(char *name, int priority, int burst) {
     }
 }
 
-// Pick the next task with the Highest Priority
+// Pick the next task with the highest priority
 Task *pickNextTask() {
     if (taskList == NULL) {
         return NULL;  // Return NULL if the task list is empty
@@ -82,7 +82,7 @@ Task *pickNextTask() {
 void schedule() {
     if (taskList == NULL) 
     {
-        return;  // Exit to prevent running an empty task list
+        return NULL;  // Exit to prevent running an empty task list
     }
     while (taskList != NULL) 
     {
@@ -94,3 +94,4 @@ void schedule() {
         free(t);
     }
 }
+
