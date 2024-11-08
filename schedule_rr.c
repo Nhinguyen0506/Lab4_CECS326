@@ -47,7 +47,7 @@ void add(char *name, int priority, int burst) {
 Task *pickNextTask() {
     if (next_node == NULL) 
     {
-        return;  // Exit to prevent running an empty task list
+        return NULL;  // Exit to prevent running an empty task list
     }
     Task *ret = next_node->task;
     if (next_node->next != NULL) {
