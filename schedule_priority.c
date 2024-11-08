@@ -42,7 +42,7 @@ void add(char *name, int priority, int burst) {
 Task *pickNextTask() {
     if (taskList == NULL) 
     {
-        return;  // Exit to prevent running an empty task list
+        return NULL;  // Exit to prevent running an empty task list
     }
     Task *priority_job = taskList->task;
     struct node *n = taskList;
