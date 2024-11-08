@@ -4,45 +4,46 @@
  
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "task.h"
 #include "list.h"
 #include "cpu.h"
 #include "schedulers.h"
 
-struct node *taskList = NULL; // Head of the task list
+struct node *taskList = NULL;
 
-// Add a task to the list
+void log_error(const char *message) {
+    fprintf(stderr, "Error: %s\n", message);
+}
+// Add a task
 void add(char *name, int priority, int burst) {
-    // Allocate memory for a new Task structure
     Task *t = malloc(sizeof(Task));
     if (t == NULL) 
     {
-        exit(1);
+        log_error("Unable to allocate memory.");
+        return;
     }
-    
     // Allocate memory for the task name and copy it
     t->name = malloc(strlen(name) + 1);
     if (t->name == NULL) 
     {
-        free(t); // Free task structure if name allocation fails
-        exit(1);
+        log_error("Unable to allocate memory for task name.");
+        free(t); // Free task structure if fails
+        return;
     }
     strcpy(t->name, name);
-
-    // Set the task's priority and burst
     t->priority = priority;
     t->burst = burst;
-
-    // Insert into the task list
+    // Insert the task into the list
     insert(&taskList, t);
 }
 
-// Pick the next task to execute with FCFS and make sure taskList must not be empty!
+// Pick the next task
 Task *pickNextTask() {
     if (taskList == NULL) 
     {
-        exit(1);  // Exit to avoid undefined behavior
+        return NULL;
     }
     return taskList->task; // Return the first task in the list
 }
@@ -51,18 +52,14 @@ Task *pickNextTask() {
 void schedule() {
     if (taskList == NULL) 
     {
-        exit(1);  // Exit to prevent running with an empty task list
+        return;  // Exit to prevent running an empty task list
     }
-
     while (taskList != NULL) 
     {
-        Task *t = pickNextTask(); // Get the next task
-        run(t, t->burst);         // Run the task for its full burst time
-
-        // Remove the completed task from the list
+        Task *t = pickNextTask(); 
+        run(t, t->burst);         
         delete(&taskList, t);
-
-        // Free memory allocated for the task name and the task itself
+        // Free memory allocated
         free(t->name);
         free(t);
     }
