@@ -60,7 +60,13 @@ void add(char *name, int priority, int burst) {
     }
 }
 
-
+// Pick the next task
+Task *pickNextTask() {
+    if (taskList == NULL) {
+        return NULL;
+    }
+    return taskList->task; // Return the first task in the list
+}
 // Schedule the tasks using FCFS
 void schedule() {
     if (taskList == NULL) 
