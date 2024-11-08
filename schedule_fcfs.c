@@ -35,24 +35,37 @@ void add(char *name, int priority, int burst) {
     strcpy(t->name, name);
     t->priority = priority;
     t->burst = burst;
-    // Insert the task into the list
-    insert(&taskList, t);
+    // Create a new node for the task and add it to the end of the list
+    struct node *newNode = malloc(sizeof(struct node));
+    if (newNode == NULL) {
+        log_error("Unable to allocate memory for list node.");
+        free(t->name);
+        free(t);
+        return;
+    }
+    newNode->task = t;
+    newNode->next = NULL;
+
+    // If the list is empty, set the new node as the head
+    if (taskList == NULL) {
+        taskList = newNode;
+    } 
+    else 
+    {
+        struct node *current = taskList;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
 }
 
-// Pick the next task
-Task *pickNextTask() {
-    if (taskList == NULL) 
-    {
-        return NULL;
-    }
-    return taskList->task; // Return the first task in the list
-}
 
 // Schedule the tasks using FCFS
 void schedule() {
     if (taskList == NULL) 
     {
-        return;  // Exit to prevent running an empty task list
+        return NULL;  // Exit to prevent running an empty task list
     }
     while (taskList != NULL) 
     {
