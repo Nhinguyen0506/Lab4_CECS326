@@ -12,24 +12,19 @@
 #include "schedulers.h"
 
 struct node *taskList = NULL;
-
-void log_error(const char *message) {
-    fprintf(stderr, "Error: %s\n", message);
-}
 // Add a task
 void add(char *name, int priority, int burst) {
+    // Allocate memory
     Task *t = malloc(sizeof(Task));
     if (t == NULL) 
     {
-        log_error("Unable to allocate memory.");
         return;
     }
     // Allocate memory for the task name and copy it
     t->name = malloc(strlen(name) + 1);
     if (t->name == NULL) 
     {
-        log_error("Unable to allocate memory for task name.");
-        free(t); // Free task structure if fails
+        free(t); // Free if fails
         return;
     }
     strcpy(t->name, name);
@@ -38,17 +33,14 @@ void add(char *name, int priority, int burst) {
     // Create a new node for the task and add it to the end of the list
     struct node *newNode = malloc(sizeof(struct node));
     if (newNode == NULL) {
-        log_error("Unable to allocate memory for list node.");
         free(t->name);
         free(t);
         return;
     }
     newNode->task = t;
     newNode->next = NULL;
-
-    // If the list is empty, set the new node as the head
     if (taskList == NULL) {
-        taskList = newNode;
+        taskList = newNode; // If the list is empty, set the new node as the head
     } 
     else 
     {
@@ -59,7 +51,6 @@ void add(char *name, int priority, int burst) {
         current->next = newNode;
     }
 }
-
 // Pick the next task
 Task *pickNextTask() {
     if (taskList == NULL) {
@@ -67,18 +58,20 @@ Task *pickNextTask() {
     }
     return taskList->task; // Return the first task in the list
 }
+
+
 // Schedule the tasks using FCFS
 void schedule() {
     if (taskList == NULL) 
     {
-        return NULL;  // Exit to prevent running an empty task list
+        return;  // Exit
     }
     while (taskList != NULL) 
     {
         Task *t = pickNextTask(); 
         run(t, t->burst);         
         delete(&taskList, t);
-        // Free memory allocated
+        // Free memory allocated 
         free(t->name);
         free(t);
     }
