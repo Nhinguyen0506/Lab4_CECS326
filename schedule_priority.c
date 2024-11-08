@@ -73,22 +73,10 @@ void add(char *name, int priority, int burst) {
 
 // Pick the next task with the Highest Priority
 Task *pickNextTask() {
-    if (taskList == NULL) 
-    {
-        return NULL;  // Exit to prevent running an empty task list
+    if (taskList == NULL) {
+        return NULL;  // Return NULL if the task list is empty
     }
-    Task *priority_job = taskList->task;
-    struct node *n = taskList;
-    // Iterate through the list
-    while (n) 
-    {
-        if (n->task->priority > priority_job->priority) 
-        {
-            priority_job = n->task;
-        }
-        n = n->next;
-    }
-    return priority_job;
+    return taskList->task; // Return the first task in the list (highest priority)
 }
 // Schedule using Priority Scheduling
 void schedule() {
