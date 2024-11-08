@@ -23,24 +23,44 @@ void log_error(const char *message) {
 void add(char *name, int priority, int burst) {
     // Allocate memory for a new Task structure
     Task *t = malloc(sizeof(Task));
-    if (t == NULL) 
-    {
+    if (t == NULL) {
         log_error("Unable to allocate memory.");
         return;
     }
+
     // Allocate memory for the task name and copy it
     t->name = malloc(strlen(name) + 1);
-    if (t->name == NULL) 
-    {
+    if (t->name == NULL) {
         log_error("Unable to allocate memory for task name.");
-        free(t); // Free task structure if fails
+        free(t); // Free task structure if name allocation fails
         return;
     }
     strcpy(t->name, name);
     t->priority = priority;
     t->burst = burst;
-    // Insert the task into the list
-    insert(&taskList, t);
+
+    // Create a new node for the task
+    struct node *newNode = malloc(sizeof(struct node));
+    if (newNode == NULL) {
+        log_error("Unable to allocate memory for list node.");
+        free(t->name);
+        free(t);
+        return;
+    }
+    newNode->task = t;
+    newNode->next = NULL;
+
+    // If the list is empty, set the new node as the head
+    if (taskList == NULL) {
+        taskList = newNode;
+    } else {
+        // Traverse to the end of the list and add the new node
+        struct node *current = taskList;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
 }
 
 // pick the next task to execute
@@ -60,16 +80,18 @@ Task *pickNextTask() {
 // Run the task
 void schedule() {
     next_node = taskList; // Initialize the next_node pointer
+    if (taskList == NULL) 
+    {
+        return NULL;  // Exit to prevent running an empty task list
+    }
     while (taskList != NULL) 
     {
         Task *t = pickNextTask();  // Get the next task in round-robin order
-
-        // Determine time slice (minimum of QUANTUM or remaining burst time)
-        int slice;
+        int slice; // Determine time slice (minimum of QUANTUM or remaining burst time)
         if (QUANTUM < t->burst) {
             slice = QUANTUM; // cpu.h defines QUANTUM as 10 milliseconds
         } else {
-            slice = t->burst; // Otherwise, use the remaining burst time
+            slice = t->burst; // Use the remaining burst time
         }
         run(t, slice);  // Run the task
         t->burst -= slice;
