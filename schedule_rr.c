@@ -3,6 +3,8 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
+
 
 #include "schedulers.h"
 #include "task.h"
