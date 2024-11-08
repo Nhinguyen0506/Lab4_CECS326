@@ -46,23 +46,25 @@ void add(char *name, int priority, int burst) {
     newNode->task = t;
     newNode->next = NULL;
 
-    // Insert the task into the list
+    // Insert the task into the list in order of priority (lowest to highest)
     if (taskList == NULL) {
         taskList = newNode; // If the list is empty, set the new node as the head
-    } 
-    else 
-    {
+    } else {
         struct node *current = taskList;
         struct node *previous = NULL;
-        while (current != NULL && current->task->priority >= t->priority) {
+
+        // Find the correct position to insert the new node (lowest to highest priority)
+        while (current != NULL && current->task->priority <= t->priority) {
             previous = current;
             current = current->next;
         }
 
         if (previous == NULL) {
+            // Insert at the beginning if the new task has the lowest priority
             newNode->next = taskList;
             taskList = newNode;
         } else {
+            // Insert in the correct position
             previous->next = newNode;
             newNode->next = current;
         }
