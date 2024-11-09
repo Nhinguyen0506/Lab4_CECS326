@@ -51,7 +51,6 @@ void add(char *name, int priority, int burst) {
         current->next = newNode;
     }
 }
-
 // pick the next task
 Task *pickNextTask() {
     if (next_node == NULL) 
@@ -60,7 +59,7 @@ Task *pickNextTask() {
     }
     Task *ret = next_node->task;
     if (next_node->next != NULL) {
-        next_node = next_node->next; // Move to the next task
+        next_node = next_node->next;
     } else {
         next_node = taskList; 
     }
@@ -71,7 +70,7 @@ void schedule() {
     next_node = taskList; // Initialize the next_node pointer
     if (taskList == NULL) 
     {
-        return NULL;  // Exit to prevent running an empty task list
+        return;  // Exit 
     }
     while (taskList != NULL) 
     {
