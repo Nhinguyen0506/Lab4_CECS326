@@ -18,7 +18,7 @@ void add(char *name, int priority, int burst) {
     if (t == NULL) {
         return;
     }
-    // Allocate memory for the task name and copy it
+    // Allocate memory
     t->name = malloc(strlen(name) + 1);
     if (t->name == NULL) {
         free(t); // Free if fails
@@ -60,7 +60,7 @@ void add(char *name, int priority, int burst) {
 // Pick the next task with the highest priority
 Task *pickNextTask() {
     if (taskList == NULL) {
-        return NULL;  // Return NULL if the task list is empty
+        return NULL;  // Return NULL
     }
     return taskList->task; // Return the first task in the list (highest priority)
 }
@@ -68,7 +68,7 @@ Task *pickNextTask() {
 void schedule() {
     if (taskList == NULL) 
     {
-        return NULL;  // Exit
+        return;  // Exit
     }
     while (taskList != NULL) 
     {
